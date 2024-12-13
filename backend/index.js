@@ -18,7 +18,17 @@ app.use(cookieParser());
 
 
 const corsOptions={
-    origin:'http://localhost:5173',
+  //  origin:'http://localhost:5173',
+  origin:(origin,callback)=>{
+    const allowedOrigins=[
+       'http://localhost:5173',
+       'https://findmycareer.co.in',
+       'http://www.findmycareer.co.in', 
+    ];
+    const isAllowed= allowedOrigins.includes(origin);
+    callback(null, isAllowed ?origin:false);
+  },
+  methods:"GET,POST,PUT,DELETE,PATCH,HEAD",
     credentials:true
 }
 app.use(cors(corsOptions));
