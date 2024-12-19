@@ -6,12 +6,13 @@ import Footer from '@/components/Footer';
 import Header from '@/components/shared/Header'
 import useGetAllJobs from '@/hooks/useGetAllJobs';
 import ExtraContainer from '@/components/ExtraContainer';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const HomePage = () => {
   useGetAllJobs();
   return (
     <div>
+      <HelmetProvider>
       <Helmet>
         <title>Home</title>
         <meta name="description" content="Browse job listings and find the perfect career opportunity or hire top talent in various industries. Start your job search today!" />
@@ -34,6 +35,7 @@ const HomePage = () => {
         {/* Canonical Link to Avoid Duplicate Content */}
         <link rel="canonical" href="https://example.com" />
       </Helmet>
+      </HelmetProvider>
         <Header/>
         <SearchBar />
         <PopularCategory/>

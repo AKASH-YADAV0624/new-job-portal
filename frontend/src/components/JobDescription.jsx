@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "./shared/Header";
 import { Badge } from "./ui/badge";
-import { faCalendarDays, faEnvelope, faMapLocationDot, faMoneyCheckDollar, faStar, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faBusinessTime, faCalendarDays, faEnvelope, faLink, faMapLocationDot, faMoneyCheckDollar, faStar, faUserTie } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "./ui/button";
@@ -52,6 +52,20 @@ const JobDescription=()=>{
                 console.log(error);
             }
         }
+        axios.get(`${JOB_API_END_POINT}/view/${jobId}`, { withCredentials: true })
+        .then((response) => {
+            if (response.data.success) {
+                console.log("Views incremented");
+            } else {
+                toast.error("Failed to increment views.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error incrementing views:", error);
+            toast.error("An error occurred while incrementing views.");
+        });
+
+
         fetchSingleJobs();
     },[jobId,dispatch,user?._id])
  
@@ -95,15 +109,18 @@ const JobDescription=()=>{
         <div className="max-w-7xl mx-40 my-10  max1024:mx-5 ">
             <div className="flex  justify-between items-center max650:flex-wrap gap-3">
                 <div>
-                    
-            <h2 className="color-gray-400 text-l my-3">{singleJob?.jobType}</h2>
+                    <div>
+
+            <h2 className="flex flex-wrap color-gray-400 text-l my-3">{singleJob?.category}</h2>
+                    </div>
             
             <h1 className="color-black text-2xl">{singleJob?.title}</h1> 
             <div className="flex flex-wrap items-center gap-2 mt-4">
-                <Badge className={'bg-blue-700 text-white font bold'} variant="ghost" >Full Time</Badge>
-                <Badge className={'bg-[#F83002] text-white font bold'} variant="ghost" >Temporary</Badge>
-                <Badge className={'bg-[#4CBB17] text-white font bold'} variant="ghost" >Freelance</Badge>
-                <Badge className={'bg-[#FF5733] text-white font bold'} variant="ghost" >Part Time</Badge>
+                <Badge className={'bg-blue-700 text-white font bold'} variant="ghost" >{singleJob?.jobType[0]}</Badge>
+                <Badge className={'bg-[#F83002] text-white font bold'} variant="ghost" >{singleJob?.jobType[1]}</Badge>
+                <Badge className={'bg-[#4CBB17] text-white font bold'} variant="ghost" >{singleJob?.jobType[2]}</Badge>
+                <Badge className={'bg-[#FF5733] text-white font bold'} variant="ghost" >{singleJob?.jobType[3]}</Badge>
+                <Badge className={'bg-[#FF5733] text-white font bold'} variant="ghost" >{singleJob?.jobType[4]}</Badge>
             </div>
 
                 </div>
@@ -155,9 +172,9 @@ const JobDescription=()=>{
 
             </div>
 
-            <div className="flex gap-2 flex-wrap my-8 p-4 pl-10 pr-5  justify-between items-center color-[#fff]  border-gray-300 shadow-lg">
-                <div className="flex items-center">   
-                <div className="flex w-1/5 items-center gap-2 my-2 pr-2.5 max650:h-fit">
+            <div className="flex gap-2 flex-wrap my-8 p-4 pl-10 pr-5  justify-between items-center color-[#fff]  border-gray-300 shadow-lg max650:p-0">
+                <div className="flex items-center flex-wrap">   
+                <div className="flex w-1/5 items-center gap-2 my-2 pr-2.5 max560:w-9/12 px-2 ">
               
               <Avatar>
                   <AvatarImage  src={singleJob?.company?.logo}/>
@@ -166,30 +183,27 @@ const JobDescription=()=>{
       </div>
       <div>
 
-      <h1 className="color-black text-2xl">{singleJob?.company?.name}</h1>
-                  <p className="text-gray-400">{singleJob?.company?.name}</p>
+      <h1 className="color-black text-2xl px-2 ">{singleJob?.company?.name}</h1>
+                  <p className="text-gray-400 px-2 ">{singleJob?.company?.name}</p>
+                  <Button className="my-2 mx-2  bg-gray-300 text-gray-500 cursor-pointer rounded  px-2 py-2"><FontAwesomeIcon icon={faEnvelope} /> {singleJob?.applicationEmail}</Button>
+                                    <Button className="my-2 mx-2 bg-gray-300 text-gray-500 cursor-pointer rounded px-2 py-2"><FontAwesomeIcon icon={faMapLocationDot}/> {singleJob?.jobRegion}</Button>
+                                    <Button className="my-2 mx-2  bg-gray-300 text-gray-500 cursor-pointer rounded px-2 py-2"><FontAwesomeIcon icon={faLink} /> {singleJob?.externalLink}</Button>
+                                    
       </div>
                   
                 
                   
                 </div>
                 <div>
-                    <Button
+                    <Button  
                     onClick={isApplied?null :applyJobHandler}
                     disabled={isApplied}
-                     className={`rounded-lg ${isApplied?'bg-gray-400 cursor-not-allowed':'bg-green-600 text-white py-3 px-7 rounded'}`}>{isApplied?'Already Applied':'Apply for Job'}</Button>
+                     className={`rounded-lg m-2 ${isApplied?'bg-gray-400 cursor-not-allowed':'bg-green-600 text-white py-3 px-7 rounded '}`}>{isApplied?'Already Applied':'Apply for Job'}</Button>
                 </div>
             </div>
             <div className="flex flex-wrap  gap-10">
                 <div  className="w-3/4 max780:w-full">
                  <p  className="my-2 text-lg text-gray-500">{singleJob?.description}</p>
-                <h2 className="my-2 text-lg text-gray-500">Experience : {singleJob?.experienceLevel}</h2>
-                <h2 className="my-2 text-lg text-gray-500">No of position : {singleJob?.position}</h2>
-                <h2 className="my-2 text-lg text-gray-500">Category : {singleJob?.category}</h2>
-                <h2  className="my-2 text-lg text-gray-500">
-                    Requirements :
-                {singleJob?.requirements}
-                </h2>
                 </div>
 
                 <div >
@@ -200,6 +214,20 @@ const JobDescription=()=>{
                         <div className="my-2">
                     <h3 className="font-medium text-black ">Date Posted:</h3>
                     <h3 className="text-gray-500">{daysAgoFunction(singleJob?.createdAt)===0?"Today":`${daysAgoFunction(singleJob?.createdAt)} days ago`}</h3>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faBusinessTime} className="text-2xl text-green-800 bg-green-100 px-2 py-2" />    
+                        <div className="my-2">
+                    <h3 className="font-medium text-black">Closing Date:</h3>
+                    <h3 className="text-gray-500">{singleJob?.closingDate?.split("T")[0]}</h3>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-2xl text-green-800 bg-green-100 px-2 py-2" />    
+                        <div className="my-2">
+                    <h3 className="font-medium text-black">Rate:</h3>
+                    <h3 className="text-gray-500">{singleJob?.minimumRate} - {singleJob?.maximumRate}</h3>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -220,7 +248,7 @@ const JobDescription=()=>{
                     <FontAwesomeIcon icon={faMoneyCheckDollar}className="text-2xl text-green-800 bg-green-100 px-2 py-2" />    
                         <div className="my-2">
                     <h3 className="font-medium  text-black">salary:</h3>
-                    <h3 className="text-gray-500">{singleJob?.salary}</h3>
+                    <h3 className="text-gray-500">{singleJob?.minimumSalary} - {singleJob?.maximumSalary} </h3>
                         </div>
                     </div>
                     </div>

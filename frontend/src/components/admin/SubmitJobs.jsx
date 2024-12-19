@@ -6,33 +6,72 @@ import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { useSelector } from "react-redux";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Select as AntSelect, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
+import  Select  from 'react-select'
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
-const SubmitJobs=()=>{
+const SubmitJobs=()=>{ // Get the jobId from the URL
   useGetAllAdminJobs()
   const navigate=useNavigate()
   const [input,setInput]=useState({
     title:"",
     description:"",
-    requirements:"",
-    salary:"",
+    externalLink:"",
+    minimumSalary:"",
     location:"",
-    jobType:"",
-    experience:"",
-    category:"",
-    position:0,
-    companyId:""
+    jobType:[],
+    maximumSalary:"",
+    category:[],
+    companyId:"",
+    minimumRate:"",
+    maximumRate:"",
+    applicationEmail:"",
+    jobTags:"",
+    closingDate:"",
+    jobRegion:"",
   });
   const [loading,setLoading]=useState(false);
  const {companies}=useSelector(store=>store.company);
-  const changeEventHandler=(e)=>{
-    setInput({...input, [e.target.name]:e.target.value});
-  };
+ const changeEventHandler = (e, isSelect = false, fieldName = "") => {
+  if (isSelect) {
+      // Handle React-Select
+      const selectedValues = e ? e.map(option => option.value) : []; // Extract selected values
+      setInput(prev => ({ ...prev, [fieldName]: selectedValues })); // Update the specific field (jobType or category)
+  } else {
+      // Handle native inputs
+      const { name, value } = e.target;
+      setInput(prev => ({ ...prev, [name]: value }));
+  }
+};
+  const jobTypeOptions = [
+    { value: 'Freelance', label: 'Freelance' },
+    { value: 'Full Time', label: 'Full Time' },
+    { value: 'Part Time', label: 'Part Time' },
+    { value: 'Internship', label: 'Internship' },
+    { value: 'Temporary', label: 'Temporary' },
+  ]
+  const categoryOptions = [
+    { value: 'Accounting/Finance', label: 'Accounting/Finance' },
+    { value: 'Automative Jobs', label: 'Automative Jobs' },
+    { value: 'Construction/Facilities', label: 'Construction/Facilities' },
+    { value: 'Customer service', label: 'Customer service' },
+    { value: 'Education Training', label: 'Education Training' },
+    { value: 'Freshers jobs', label: 'Freshers jobs' },
+    { value: 'Healthcare', label: 'Healthcare' },
+    { value: 'Part time job', label: 'Part time job' },
+    { value: 'Market & Customer Research', label: 'Market & Customer Research' },
+    { value: 'Others', label: 'Others' },
+    { value: 'Restaurant/Food Service', label: 'Restaurant/Food Service' },
+    { value: 'Sales & Marketing', label: 'Sales & Marketing' },
+    { value: 'Transportation / Logistics', label: 'Transportation / Logistics' },
+    { value: 'Work From Home', label: 'Work From Home' },
+  ]
 
   const selectChangeHandler =(value)=>{
     const selectedCompany=companies.find((company)=>company.name.toLowerCase()===value);
@@ -40,6 +79,7 @@ const SubmitJobs=()=>{
   }
 
   const submitAndNavigate= async(e)=>{
+    
     e.preventDefault();
     try{
       setLoading(true);
@@ -83,7 +123,7 @@ const SubmitJobs=()=>{
           { 
             companies.length > 0 &&
             (
-            <Select onValueChange={selectChangeHandler}>
+            <AntSelect onValueChange={selectChangeHandler}>
             <SelectTrigger>
               <SelectValue  
               placeholder="Select Company"
@@ -101,7 +141,7 @@ const SubmitJobs=()=>{
                 }
               </SelectGroup>
             </SelectContent>
-           </Select>)}
+           </AntSelect>)}
             <hr />
             </div>
             <h1>Job Details</h1>
@@ -129,47 +169,48 @@ const SubmitJobs=()=>{
             />
           </div>
         </div>
-    
-        {/* Location and Title */}
-        <div className="flex w-full gap-2 max650:flex-wrap">
+        <div className="flex w-full  gap-2 max650:flex-wrap">
           <div className="w-4/5 max650:w-full">
-            <label>Job Region</label>
-            <Input
-              type="text"
-              name="Jobregion"  //mene add kia
-              value={input.Jobregion}
-              placeholder="india"
-              onChange={changeEventHandler}
-            />
+            <label>Job Type(optional)</label>
+            <Select
+    name="jobType"
+    options={jobTypeOptions}
+    isMulti
+    value={jobTypeOptions.filter(option => input.jobType.includes(option.value))} // Sync with state
+    onChange={(selectedOptions) => changeEventHandler(selectedOptions, true, "jobType")} // Specify fieldName as "jobType"
+    placeholder="Select Job Types"
+/>
           </div>
-          <div className="w-4/5 max650:w-full">
-            <label>Job Type</label>
-            <Input
-            type="text"
-            name="jobType"
-            value={input.jobType}
-            onChange={changeEventHandler}
-            />
+          <div className="w-4/5 items-center max650:w-full">
+            <label>Remote Position (optional)</label>
+            <RadioGroup defaultValue="option-one">
+  <div className="flex my-2 items-center space-x-2">
+    <RadioGroupItem value="option-one" id="option-one" />
+    <Label htmlFor="option-one"> Select if this is a remote position.</Label>
+  </div>
+  
+</RadioGroup>
           </div>
         </div>
-    
-        {/* Resume Category and Video */}
         <div className="flex w-full gap-2 max650:flex-wrap">
           <div className="w-4/5 max650:w-full">
-            <label>Salary</label>
+            <label>Minimum Salary (optional) </label>
             <Input
-              type="text"
-              name="salary"
-              value={input.salary}
+              type="number"
+              name="minimumSalary"
+              value={input.minimumSalary}
               onChange={changeEventHandler}
             />
           </div>
           <div className="w-4/5 max650:w-full">
-            <label>Experience (optional)</label>
+            <label>Maximum Salary (optional)</label>
             <Input
-              type="Number"
-              name="experience"
-              value={input.experience}
+              type="number"
+              
+            name="maximumSalary"
+            placeholder="eg :20000"
+              value={input.maximumSalary}
+             
               onChange={changeEventHandler}
             />
           </div>
@@ -187,55 +228,97 @@ const SubmitJobs=()=>{
             required
           />
         </div>
-    
-        {/* Minimum Rate and Photo */}
         <div className="flex w-full gap-2 max650:flex-wrap">
           <div className="w-4/5 max650:w-full">
-            <label>No of Position (optional)</label>
+            <label>Minimum Rate (optional)</label>
             <Input
-              type="Number"
-              name="position"
-              value={input.position}
+              type="number"
+              name="minimumRate"
+              value={input.minimumRate}
               onChange={changeEventHandler}
-             
             />
           </div>
           <div className="w-4/5 max650:w-full">
-            <label>Requirement (optional)</label>
+            <label>Maximum Rate (optional)</label>
             <Input
-               type="text"
-               name="requirements"
-               value={input.requirements}
-               onChange={changeEventHandler}
+              type="number"
+            name="maximumRate"
+              value={input.maximumRate}
+             
+              onChange={changeEventHandler}
             />
           </div>
         </div>
-        <div className="search-field">
-          <label>Categories</label>
-          <select
-               name="category"
-           value={input.category}
-           onChange={changeEventHandler}
-          >
-             <option value="">All Category</option>
-        <option value="Accounting/Finance">Accounting/Finance</option>
-        <option value="Automative Jobs">Automative Jobs</option>
-        <option value="Construction/Facilities">Construction/Facilities</option>
-        <option value="Customer service">Customer service</option>
-        <option value="Education Training">Education Training</option>
-        <option value="Freshers jobs">Freshers jobs</option>
-        <option value="Healthcare">Healthcare</option>
-        <option value="Part time job">Part time job</option>
-        <option value="Market & Customer Research">Market & Customer Research</option>
-        <option value="Others">Frontend developer</option>
-        <option value="Restaurant/Food Service">Restaurant/Food Service</option>
-        <option value="Sales & Marketing">Sales & Marketing</option>
-        <option value="Transportation / Logistics">Transportation / Logistics</option>
-        <option value="Work from home">Work from home</option>
-        <option value="others">Others</option>
-            {/* Add other categories as needed */}
-          </select>
+    
+        {/* Location and Title */}
+        <div className="flex w-full gap-2 max650:flex-wrap">
+          <div className="w-4/5 max650:w-full">
+            <label>Job Region</label>
+            <Input
+              type="text"
+              name="jobRegion"  //mene add kia
+              value={input.jobRegion}
+              placeholder="india"
+              onChange={changeEventHandler}
+            />
+          </div>
+          <div className="w-4/5 max650:w-full">
+            <label>Job Tags(option)</label>
+            <Input
+            type="text"
+            name="jobTags"
+            value={input.jobTags}
+            onChange={changeEventHandler}
+            />
+          </div>
         </div>
+    
+        {/* Resume Category and Video */}
+        <div className="flex w-full gap-2 max650:flex-wrap">
+          <div className="w-4/5 max650:w-full">
+            <label>Application Email (optional)</label>
+            <Input
+              type="text"
+              name="applicationEmail"
+              value={input.applicationEmail}
+              onChange={changeEventHandler}
+            />
+          </div>
+          <div className="w-4/5 max650:w-full">
+            <label>Closing Date(optional)</label>
+            <Input
+              type="Date"
+              name="closingDate"
+              value={input.closingDate}
+              onChange={changeEventHandler}
+            />
+          </div>
+        </div>
+        
+    
+     
+        <div className="search-field">
+          <label>Job Categories</label>
+          <Select
+    name="category"
+    options={categoryOptions}
+    isMulti
+    value={categoryOptions.filter(option => input.category.includes(option.value))} // Sync with state
+    onChange={(selectedOptions) => changeEventHandler(selectedOptions, true, "category")} // Specify fieldName as "category"
+    placeholder="Select Categories"
+/>
+
+       
+        </div>
+        <div className="my-2 max650:w-full">
+            <label>External "Apply for Job" link (optional)</label>
+            <Input
+              type="text"
+              name="externalLink"
+              value={input.externalLink}
+              onChange={changeEventHandler}
+            />
+          </div>
 
         {/* Submit Button */}
         <div className="w-full flex  mt-5">

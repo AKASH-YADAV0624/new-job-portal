@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { setUser } from "@/redux/authSlice";
 import { Helmet } from "react-helmet";
+import { HelmetProvider } from "react-helmet-async";
 
 const AddResume = () => {
   const { user } = useSelector(store => store.auth);
@@ -99,11 +100,13 @@ const AddResume = () => {
 
   return (
     <div>
+      <HelmetProvider>
        <Helmet>
         <title>Submit Resume - Your Profile</title>  {/* Dynamic Title */}
         <meta name="description" content="Submit your resume with all necessary details including skills, education, and experience." />  {/* Meta Description */}
         <meta name="keywords" content="resume, profile, job application, skills, experience, education" />  {/* Meta Keywords */}
       </Helmet>
+      </HelmetProvider>
       <Header />
       <div className="flex ">
         <div className="h-full w-1/5 max1024:w-0">

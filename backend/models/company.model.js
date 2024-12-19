@@ -31,7 +31,12 @@ const companySchema= new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
-    }
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending',  // Default to pending when a job is first created
+      },
 },{timestamps:true})
 
 export const Company=mongoose.model('Company',companySchema);

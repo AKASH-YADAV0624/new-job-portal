@@ -7,7 +7,7 @@ import './Jobs.css';
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchedCategory, setSearchedQuery } from "@/redux/jobSlice";
 import useGetAllJobs from "@/hooks/useGetAllJobs";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Jobs = () => {
   useGetAllJobs();
@@ -30,10 +30,12 @@ const Jobs = () => {
 
   return (
     <div className="w-full h-full">
+      <HelmetProvider>
        <Helmet>
         <title>Find Jobs | Search and Apply for Opportunities</title>
         <meta name="description" content={`Find the best job opportunities in your field. Apply for jobs in categories like ${searchedCategory || 'All Categories'}.`} />
       </Helmet>
+      </HelmetProvider>
       <Header />
       <div className="flex h-screen">
         <div className="w-1/2 overflow-auto max-h-screen max650:w-full">

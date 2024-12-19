@@ -45,11 +45,16 @@ const Login=()=>{
         }
     }
 
-    useEffect(()=>{
-        if(user){
+    useEffect(() => {
+        if (user) {
+          // Check if user is already logged in and redirect based on role
+          if (user.role === "admin") {
+            navigate("/admindashboard");
+          } else {
             navigate("/");
+          }
         }
-    },[])
+      }, [user, navigate]);
 
     return(
         <>        <Header/>

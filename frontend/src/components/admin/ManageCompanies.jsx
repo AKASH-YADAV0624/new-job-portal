@@ -11,18 +11,44 @@ import {
 import { Avatar, AvatarImage } from "../ui/avatar";
 import logo from "@/assets/logouser.png";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Edit2, MoreHorizontal } from "lucide-react";
+import { Edit2, MoreHorizontal, Trash2 } from "lucide-react";
 import Header from "../shared/Header";
 import Sidebar from "../Sidebar";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useGetAllCompanies from "@/hooks/useGetAllCompanies";
+import axios from "axios";
+import { toast } from "sonner";
+import { COMPANY_API_END_POINT } from "@/utils/constant";
 const ManageCompanies = () => {
+  const navigate = useNavigate();
+  const dispatch=useDispatch();
     useGetAllCompanies();
   const { companies } = useSelector(store=>store.company);
+  const handleDeleteCompany = async (companyId) => {
+    try {
+      const confirmed = window.confirm("Are you sure you want to delete this company?");
+      if (!confirmed) return;
+  
+      const response = await axios.delete(`${COMPANY_API_END_POINT}/delete/${companyId}`, {
+        withCredentials: true,
+      });
+  
+      if (response.data.success) {
+        toast.success("Company deleted successfully!");
+        dispatch({ type: "REMOVE_COMPANY", payload: companyId }); // Remove the company from Redux state
+      } else {
+        toast.error("Failed to delete the company.");
+      }
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      toast.error("An error occurred while deleting the company.");
+    }
+  };
+  
 
-  const navigate = useNavigate();
+  
   return (
     <div>
       <Header />
@@ -41,6 +67,7 @@ const ManageCompanies = () => {
                 <TableHead className="bg-[#333] text-white">Logo</TableHead>
                 <TableHead className="bg-[#333] text-white">Name</TableHead>
                 <TableHead className="bg-[#333] text-white">Date</TableHead>
+                <TableHead className="bg-[#333] text-white">Status</TableHead>
                 <TableHead className="text-right text-white bg-[#333]">
                   Action
                 </TableHead>
@@ -56,16 +83,25 @@ const ManageCompanies = () => {
                     </TableCell>
                     <TableCell className="max560:p-2">{company.name}</TableCell>
                     <TableCell className="max560:p-2">{company.createdAt.split("T")[0]}</TableCell>
+                    <TableCell className="max560:p-2">{company.status}</TableCell>
                     <TableCell className="text-right cursor-pointer max560:p-2">
                       <Popover>
                         <PopoverTrigger>
                           <MoreHorizontal />
                         </PopoverTrigger>
-                        <PopoverContent className="w-32 max560:w-16">
-                          <div onClick={()=>navigate(`/admin/company/${company._id}`)}>
+                        <PopoverContent className="w-32 ">
+                          <div onClick={()=>navigate(`/admin/company/${company._id}`)}
+                            className="flex items-center w-fit gap-2 cursor-pointer mt-2">
                             <Edit2 className="w-4 cursor-pointer " />
                             <span>Edit</span>
                           </div>
+                          <div
+                          className="flex items-center w-fit gap-2 cursor-pointer mt-2"
+                          onClick={() => handleDeleteCompany(company._id)}
+                        >
+                          <Trash2 className="w-4 cursor-pointer" />
+                          <span>Delete</span>
+                        </div>
                         </PopoverContent>
                       </Popover>
                     </TableCell>

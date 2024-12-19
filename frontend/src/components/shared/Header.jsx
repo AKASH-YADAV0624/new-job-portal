@@ -57,7 +57,7 @@ const Header = () => {
     <nav className="header-nav">
       <div className="first-half ">
         <div>
-          <img src={image} alt="Description" className="w-10 h-auto mr-2" />
+          <img src={image} alt="Description" className="w-20 h-auto mr-2" />
         </div>
 
         <Link to="/">Home</Link>
@@ -158,7 +158,7 @@ const Header = () => {
       {!submenuOpen && (
         <div>
           <div>
-            <img src={image} alt="Logo" className="w-10 h-auto mx-5 my-5" />
+            <img src={image} alt="Logo" className="w-20 h-auto mx-5 my-5" />
           </div>
           <div className="mx-9 my-9 gap-4 flex flex-col">
             <Link to="/">Home</Link>

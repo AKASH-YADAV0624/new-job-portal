@@ -24,7 +24,8 @@ export const registerCompany= async(req,res)=>{
       };
       company=await Company.create({
         name:companyName,
-        userId:req.id
+        userId:req.id,
+        status:"pending",
       });
       return res.status(201).json({
         message:"Company registered successfully.",
@@ -112,7 +113,7 @@ export const updateCompany=async(req,res)=>{
 // Get all companies
 export const getAllCompanies = async (req, res) => {
     try {
-      const companies = await Company.find(); // Fetch all companies
+      const companies = await Company.find({ status: 'approved' }); ; // Fetch all companies
       if (!companies || companies.length === 0) {
         return res.status(404).json({
           message: "No companies found.",
@@ -132,3 +133,122 @@ export const getAllCompanies = async (req, res) => {
     }
   };
   
+
+  // Get all pending companies
+export const getPendingCompanies = async (req, res) => {
+  try {
+    const pendingCompanies = await Company.find({ status: "pending" });
+
+    if (!pendingCompanies || pendingCompanies.length === 0) {
+      return res.status(404).json({
+        message: "No pending companies found.",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      companies: pendingCompanies,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Error fetching pending companies.",
+      success: false,
+    });
+  }
+};
+// Admin approves a company
+export const approveCompany = async (req, res) => {
+  try {
+    const companyId = req.params.id;
+
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      { status: "approved" },
+      { new: true }
+    );
+
+    if (!updatedCompany) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Company approved successfully.",
+      company: updatedCompany,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Error approving company.",
+      success: false,
+    });
+  }
+};
+
+// Admin rejects a company
+export const rejectCompany = async (req, res) => {
+  try {
+    const companyId = req.params.id;
+
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      { status: "rejected" },
+      { new: true }
+    );
+
+    if (!updatedCompany) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Company rejected successfully.",
+      company: updatedCompany,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Error rejecting company.",
+      success: false,
+    });
+  }
+};
+
+
+// delete company
+export const deleteCompany = async (req, res) => {
+  const { id } = req.params; // Extract company ID from request parameters
+  try {
+      // Find the company by ID
+      let company = await Company.findById(id);
+      if (!company) {
+          return res.status(404).json({
+              message: "Company not found.",
+              success: false
+          });
+      }
+
+      // Delete the company
+      await company.deleteOne();
+
+      // Return success response
+      return res.status(200).json({
+          success: true,
+          message: "Company deleted successfully"
+      });
+  } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+          message: "Error deleting company.",
+          success: false
+      });
+  }
+};

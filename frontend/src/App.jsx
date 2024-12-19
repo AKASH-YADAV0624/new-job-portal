@@ -1,7 +1,6 @@
-
-import { createBrowserRouter, RouterProvider} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import './App.css'
+import './App.css';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Jobs from './components/jobs/Jobs';
@@ -30,142 +29,144 @@ import CompanyDescription from './components/CompanyDescription';
 import BrowseCandidates from './components/BrowseCandidate';
 import CandidateDescription from './components/CandidateDescription';
 import BrowseCandidateHalfMap from './components/BrwoseCandidateHalfMap';
-
-const appRouter=createBrowserRouter([
-  {
-    path:'/',
-    element:<HomePage/>
-  },
-  {
-    path:'/login',
-    element:<Login/>
-  },
-  {
-    path:'/register',
-    element:<Register/>
-    
-  },
-  {
-    path:'/jobs',
-    element:<Jobs/>
-  },
-  {
-    path:'/description/:id',
-    element:<JobDescription/>
-  },
-  {
-    path:'/companydescription/:id',
-    element:<CompanyDescription/>
-  },
-  {
-    path:'/candidatedescription/:id',
-    element:<CandidateDescription/>
-  },
-  {
-    path:'/browsecategories',
-    element:<BrowseCategories/>
-  },
-  {
-    path:'/browsecandidates',
-    element:<BrowseCandidates/>
-  },
-  {
-    path:'/browsecandidatehalfmap',
-    element:<BrowseCandidateHalfMap/>
-  },
-  {
-    path:'/profile',
-    element:<Profile/>
-  },
-  {
-    path:'/dashboard',
-    element:<Dashboard/>
-  },
-  {
-    path:'/messages',
-    element:<Messages/>
-  },
-  {
-    path:'/bookmark',
-    element:<BookMark/>
-  },
-  {
-    path:'/manageresume',
-    element:<ManageResume/>
-  },
-  {
-    path:'/addresume',
-    element:<AddResume/>
-  },
-  {
-    path:'/contact',
-    element:<Contact/>
-  },
-  {
-    path:'/blog',
-    element:<Blog/>
-  },
-  {
-    path:'/myapplication',
-    element:<MyApplication/>
-  },
-
-  //admin ke liye
-  {
-    path:"/admin/company",
-    element:<ProtectedRoute><Company/></ProtectedRoute>
-  },
-  {
-    path:"/admin/managecompanies",
-    element:<ProtectedRoute><ManageCompanies/></ProtectedRoute>
-  },
-  {
-    path:"/admin/company/:id",
-    element:<ProtectedRoute><CompanySetup/></ProtectedRoute>
-  },
-  {
-    path:"/admin/ManageJobs",
-    element:<ProtectedRoute><ManageJobs/></ProtectedRoute>  // admin jobs hai yeh but mere liye manage jobs
-  },
-  {
-    path:"/admin/submitjobs",
-    element:<ProtectedRoute><SubmitJobs/> </ProtectedRoute> // post job hai vese me submit jobs bna rha hu 
-  },
-  {
-    path:"/admin/jobs/:id/applicants",
-    element:<ProtectedRoute><Applicants/></ProtectedRoute>
-  },
-
-
-  // yeh me kr rha hu 
-  {
-    path:"/admin/browsecompanies",
-    element:<BrowseCompanies/>
-  },
-  {
-    path:"/admin/choosepackage",
-    element:<ProtectedRoute><ChoosePackage/></ProtectedRoute>
-  },
-  {
-    path:"/admin/checkout",
-    element:<ProtectedRoute><Checkout/></ProtectedRoute>
-  }
+import UpdateJob from './components/admin/updateJob';
+import DuplicateJob from './components/admin/DuplicateJob';
+import AdminDashboard from './components/AdminDashboard';
+// Assuming userRole comes from context or props
+const appRouter = createBrowserRouter([
   
-])
+  {
+    path: '/',
+    element: <HomePage />,
+  },
+  {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
+  {
+    path: '/jobs',
+    element: <Jobs />,
+  },
+  {
+    path: '/description/:id',
+    element: <JobDescription />,
+  },
+  {
+    path: '/companydescription/:id',
+    element: <CompanyDescription />,
+  },
+  {
+    path: '/candidatedescription/:id',
+    element: <CandidateDescription />,
+  },
+  {
+    path: '/browsecategories',
+    element: <BrowseCategories />,
+  },
+  {
+    path: '/browsecandidates',
+    element: <BrowseCandidates />,
+  },
+  {
+    path: '/browsecandidatehalfmap',
+    element: <BrowseCandidateHalfMap />,
+  },
+  {
+    path: '/profile',
+    element: <Profile />,
+  },
+  {
+    path: '/dashboard',
+    element: <Dashboard />,
+  },
+  {
+    path: '/messages',
+    element: <Messages />,
+  },
+  {
+    path: '/bookmark',
+    element: <BookMark />,
+  },
+  {
+    path: '/manageresume',
+    element: <ManageResume />,
+  },
+  {
+    path: '/addresume',
+    element: <AddResume />,
+  },
+  {
+    path: '/contact',
+    element: <Contact />,
+  },
+  {
+    path: '/blog',
+    element: <Blog />,
+  },
+  {
+    path: '/myapplication',
+    element: <MyApplication />,
+  },
+  {
+    path: '/admindashboard',
+    element: <AdminDashboard />,
+  },
+
+  // Admin specific routes with ProtectedRoute
+  {
+    path: '/admin/company',
+    element: <ProtectedRoute><Company /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/updatejob/:id',
+    element: <ProtectedRoute><UpdateJob/></ProtectedRoute>,                               ///updateeeeee
+  },
+  {
+    path: '/admin/duplicatejob/:id',
+    element: <ProtectedRoute><DuplicateJob/></ProtectedRoute>,                               ///updateeeeee
+  },
+  {
+    path: '/admin/managecompanies',
+    element: <ProtectedRoute><ManageCompanies /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/company/:id',
+    element: <ProtectedRoute><CompanySetup /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/ManageJobs',
+    element: <ProtectedRoute><ManageJobs /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/submitjobs',
+    element: <ProtectedRoute><SubmitJobs /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/jobs/:id/applicants',
+    element: <ProtectedRoute><Applicants /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/browsecompanies',
+    element: <BrowseCompanies />,
+  },
+  {
+    path: '/admin/choosepackage',
+    element: <ProtectedRoute><ChoosePackage /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/checkout',
+    element: <ProtectedRoute><Checkout /></ProtectedRoute>,
+  },
+]);
 
 function App() {
-
   return (
-    <>
-<RouterProvider router={appRouter} />
-
-
-    </>
-  )
+    <RouterProvider router={appRouter} />
+  );
 }
 
 export default App;
-
-
-// browse and job dono page bnane h just job wala main hoga thik hai jisme filteration bhi hoga 
-//, and same jb search wale me filter lgayenge toh usme browse wala open hoga
